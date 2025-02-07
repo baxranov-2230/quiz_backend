@@ -1,0 +1,28 @@
+from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy.ext.asyncio import AsyncSession
+from src.settings.base import get_db
+from src.schemas.question import QuestionUpdate
+from src.model.question import Question
+
+router = APIRouter()
+
+@router.put("/update-question")
+async def update_question(
+    question_id: int,
+    question_item: QuestionUpdate,
+    db: AsyncSession = Depends(get_db)
+):
+    
+    question = await db.get(Question, question_id)
+    if not question:
+        raise HTTPException(status_code=404, detail="Question not found")
+    
+
+    update_data = question_item.dict(exclude_unset=True)
+    for key, value in update_data.items():
+        setattr(question, key, value)
+    
+
+    await db.commit()
+    await db.refresh(question)
+    return question
