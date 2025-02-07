@@ -1,4 +1,4 @@
-from sqlalchemy import Column , Integer , String , Text
+from sqlalchemy import Column , Integer , String , Text, ForeignKey
 from src.settings.base import Base
 
 class Question(Base):
@@ -11,3 +11,8 @@ class Question(Base):
     B = Column(String , nullable=False)
     C = Column(String , nullable=False)
     D = Column(String , nullable=False)
+    
+    teacher_id = Column(Integer, ForeignKey("teachers.id"))
+    subject_id = Column(Integer , ForeignKey("subkects.id"))
+    
+    
