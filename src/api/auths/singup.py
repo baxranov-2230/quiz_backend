@@ -23,8 +23,8 @@ async def register(user_data: RegisterRequest, db: AsyncSession = Depends(get_db
     
     new_user = User(
         username=user_data.username,
-        hashed_password=hash_password(user_data.password),
-        disabled=False,
+        hashed_password=await hash_password(user_data.password),
+        disabled=True,
         role=user_data.role.value
     )
     db.add(new_user)
@@ -33,10 +33,18 @@ async def register(user_data: RegisterRequest, db: AsyncSession = Depends(get_db
 
 
     new_profile = None
-    if new_user.role == UserRole.student.value:
+    if new_user.role.value == UserRole.student.value:
         new_profile = Student(user_id=new_user.id)
-    elif new_user.role == UserRole.teacher.value:
+        print("Some things", new_profile)
+    elif new_user.role.value == UserRole.teacher.value:
         new_profile = Teacher(user_id=new_user.id)
+        
+    print(new_profile)
+    if new_profile is None:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid role specified for profile creation"
+        )
 
     db.add(new_profile)
     await db.commit()

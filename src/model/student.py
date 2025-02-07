@@ -7,12 +7,12 @@ class Student(Base):
     
     id = Column(Integer, primary_key=True, nullable=False)
     user_id = Column(Integer, ForeignKey("users.id"))
-    last_name = Column(String(50), nullable=False)
-    first_name = Column(String(50), nullable=False)
-    patronymic = Column(String(50), nullable=False)
-    group_id = Column(Integer, ForeignKey("groups.id"), nullable=False)
-    jshir = Column(String(15), unique=True, nullable=False)
-    passport = Column(String(20), unique=True, nullable=False)
+    last_name = Column(String(50), nullable=True)
+    first_name = Column(String(50), nullable=True)
+    patronymic = Column(String(50), nullable=True)
+    group_id = Column(Integer, ForeignKey("groups.id"), nullable=True)
+    jshir = Column(String(15), unique=True, nullable=True)
+    passport = Column(String(20), unique=True, nullable=True)
     
     group = relationship("Group", back_populates="students")
     results = relationship("ResultStudent", back_populates="student", cascade="all, delete")

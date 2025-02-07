@@ -7,11 +7,11 @@ class Teacher(Base):
     
     id = Column(Integer, primary_key=True, nullable=False)
     user_id = Column(Integer, ForeignKey("users.id"))
-    last_name = Column(String(50), nullable=False)
-    first_name = Column(String(50), nullable=False)
-    patronymic = Column(String(50), nullable=False)
-    department_id = Column(Integer, ForeignKey("departments.id"), nullable=False)
-    jshir = Column(String(14), unique=True, nullable=False)
+    last_name = Column(String(50), nullable=True)
+    first_name = Column(String(50), nullable=True)
+    patronymic = Column(String(50), nullable=True)
+    department_id = Column(Integer, ForeignKey("departments.id"), nullable=True)
+    jshir = Column(String(14), unique=True, nullable=True)
     
     department = relationship("Department", back_populates="teachers")
     subjects = relationship("Subject", back_populates="teacher", cascade="all, delete")
