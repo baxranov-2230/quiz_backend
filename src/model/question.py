@@ -1,4 +1,5 @@
 from sqlalchemy import Column , Integer , String , Text, ForeignKey
+from sqlalchemy.orm import relationship
 from src.settings.base import Base
 
 class Question(Base):
@@ -15,4 +16,8 @@ class Question(Base):
     teacher_id = Column(Integer, ForeignKey("teachers.id"))
     subject_id = Column(Integer , ForeignKey("subkects.id"))
     
+    teacher = relationship("Teacher", back_populates="questions")
+    subject = relationship("Subject", back_populates="questions")
+    
+
     

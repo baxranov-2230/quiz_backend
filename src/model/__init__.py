@@ -5,5 +5,6 @@ from .result_student import ResultStudent
 from .subject import Subject
 from .teacher import Teacher
 from .student import Student
-from .user import User
+from .user import User, UserRole
 from .question import Question
+from .user_test import UserTest

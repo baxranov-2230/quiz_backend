@@ -13,3 +13,4 @@ class Subject(Base):
     teacher = relationship("Teacher", back_populates="subjects")
     group = relationship("Group", back_populates="subjects")
     results = relationship("ResultStudent", back_populates="subject", cascade="all, delete")
+    questions = relationship("Question", back_populates="subject", cascade="all, delete-orphan")
