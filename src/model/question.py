@@ -14,7 +14,7 @@ class Question(Base):
     D = Column(String , nullable=False)
     
     teacher_id = Column(Integer, ForeignKey("teachers.id"))
-    subject_id = Column(Integer , ForeignKey("subkects.id"))
+    subject_id = Column(Integer , ForeignKey("subjects.id"))
     
     teacher = relationship("Teacher", back_populates="questions")
     subject = relationship("Subject", back_populates="questions")

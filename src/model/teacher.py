@@ -1,7 +1,7 @@
 from sqlalchemy import Column , Integer , String , ForeignKey
 from sqlalchemy.orm import relationship
 from src.settings.base import Base
-from model.teacherandgroup import TeacherAndGroup
+from src.model.teacher_group_association import teacher_group_association
 
 class Teacher(Base):
     __tablename__ = "teachers"
@@ -19,3 +19,4 @@ class Teacher(Base):
     subjects = relationship("Subject", back_populates="teacher", cascade="all, delete")
     questions = relationship("Question", back_populates="teacher", cascade="all, delete-orphan")
     
+    groups = relationship("Group", secondary=teacher_group_association, back_populates="teachers")
