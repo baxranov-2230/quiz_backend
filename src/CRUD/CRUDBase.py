@@ -1,6 +1,6 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
-from typing import Type, TypeVar, Generic, List
+from typing import Type, TypeVar, Generic, List , Optional
 from fastapi import HTTPException
 from src.settings.base import Base
 
@@ -18,8 +18,8 @@ class CRUDBaseAsync(Generic[ModelType, SchemaType]):
             raise HTTPException(status_code=404, detail="Item not found")
         return db_obj
 
-    async def get_all(self, db: AsyncSession) -> List[ModelType]:
-        result = await db.execute(select(self.model))
+    async def get_all(self, db: AsyncSession, limit: Optional[int] = 100) -> List[ModelType]:
+        result = await db.execute(select(self.model).limit(limit))
         return result.scalars().all()
 
     async def create(self, db: AsyncSession, obj_in: SchemaType) -> ModelType:

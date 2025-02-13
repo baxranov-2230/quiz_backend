@@ -1,6 +1,7 @@
 from sqlalchemy import Column , Integer , String , ForeignKey
 from sqlalchemy.orm import relationship
 from src.settings.base import Base
+from model.teacherandgroup import TeacherAndGroup
 
 class Teacher(Base):
     __tablename__ = "teachers"
@@ -14,11 +15,7 @@ class Teacher(Base):
     jshir = Column(String(14), unique=True, nullable=True)
     
     department = relationship("Department", back_populates="teachers")
-    subjects = relationship("Subject", back_populates="teacher", cascade="all, delete")
-    groups = relationship("Group", back_populates="teacher", cascade="all, delete")
     user = relationship("User", back_populates="teacher", uselist=False)
+    subjects = relationship("Subject", back_populates="teacher", cascade="all, delete")
     questions = relationship("Question", back_populates="teacher", cascade="all, delete-orphan")
-    
-
-    
     
