@@ -1,6 +1,7 @@
 from sqlalchemy import Column , Integer , String , ForeignKey
 from sqlalchemy.orm import relationship
 from src.settings.base import Base
+from model.teacherandgroup import teacher_group_association
 
 
 class Group(Base):
@@ -8,8 +9,11 @@ class Group(Base):
     
     id = Column(Integer, primary_key=True, nullable=False)
     name = Column(String(25), nullable=False)
-    teacher_id = Column(Integer, ForeignKey("teachers.id"), nullable=False)
+    department_id = Column(Integer, ForeignKey("departments.id"), nullable=False)
     
-    teacher = relationship("Teacher", back_populates="groups")
+
     subjects = relationship("Subject", back_populates="group", cascade="all, delete")
     students = relationship("Student", back_populates="group", cascade="all, delete")
+    department = relationship("Department", back_populates="groups")
+    
+    

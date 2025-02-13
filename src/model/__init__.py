@@ -8,3 +8,4 @@ from .student import Student
 from .user import User, UserRole
 from .question import Question
 from .user_test import UserTest
+from .teacherandgroup import teacher_group_association
