@@ -99,3 +99,7 @@ def role_required(required_role: UserRole):
             return await func(*args, current_user=current_user, **kwargs)
         return wrapper
     return decorator
+
+
+
+        

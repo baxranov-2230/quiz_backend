@@ -40,5 +40,5 @@ class CRUDBaseAsync(Generic[ModelType, SchemaType]):
 
     async def delete(self, db: AsyncSession, id: int) -> None:
         db_obj = await self.get(db, id)
-        db.delete(db_obj)
+        await db.delete(db_obj)
         await db.commit()

@@ -12,7 +12,7 @@ main_crud = CRUDBaseAsync(Faculty)
 
 @faculty_router.post("/faculty-create")
 async def faculty(faculty: FacultyCreate, db : AsyncSession = Depends(get_db)):
-    return await main_crud.create(db, obj_in=faculty.name)
+    return await main_crud.create(db, obj_in=faculty)
 
 
 
@@ -36,7 +36,6 @@ async def faculty_delete(
     faculty_id: int, 
     db: AsyncSession = Depends(get_db)):
     await main_crud.delete(db , id = faculty_id)
-    
     return {"message": "Faculty deleted successfully"}
 
 
