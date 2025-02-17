@@ -15,5 +15,5 @@ class Group(Base):
     subjects = relationship("Subject", back_populates="group", cascade="all, delete")
     students = relationship("Student", back_populates="group", cascade="all, delete")
     department = relationship("Department", back_populates="groups")
-    
+    user_tests = relationship("UserTest", back_populates="group")
     teachers = relationship("Teacher", secondary=teacher_group_association, back_populates="groups")

@@ -1,9 +1,10 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from src.settings.base import get_db
 from src.CRUD.CRUDBase import CRUDBaseAsync
-from src.model import Department
+from src.model import Department , Faculty
 from src.schemas import DepartmentUpdate, DepartmentCreate
+from sqlalchemy import select
 
 department_router = APIRouter()
 
@@ -12,6 +13,13 @@ main_crud = CRUDBaseAsync(Department)
 
 @department_router.post("/department-create")
 async def department(department: DepartmentCreate, db : AsyncSession = Depends(get_db)):
+    some_id = await db.execute(select(Faculty).where(Faculty.id == department.faculty_id))
+    result = some_id.scalars().first()
+    if not result:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Not found faculty"
+        )
     return await main_crud.create(db, obj_in=department)
 
 
