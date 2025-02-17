@@ -1,6 +1,6 @@
 import asyncio
 from datetime import datetime, timedelta
-from jose import JWTError, jwt
+from jose import JWTError, jwt, ExpiredSignatureError
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from passlib.context import CryptContext
@@ -42,6 +42,10 @@ async def verify_token(token: str, secret_key: str):
     try:
         payload = await asyncio.to_thread(jwt.decode, token, secret_key, algorithms=[settings.ALGORITHM])
         return payload
+    except ExpiredSignatureError:
+        unverified_payload = jwt.get_unverified_claims(token)
+        unverified_payload.setdefault("is_expired", True)
+        return unverified_payload
     except JWTError:
         return None
 

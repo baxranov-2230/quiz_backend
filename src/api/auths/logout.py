@@ -9,7 +9,6 @@ router = APIRouter()
 
 @router.post("/logout")
 async def logout(
-    response: Response,
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db)
 ):
@@ -28,5 +27,3 @@ async def logout(
     await db.commit()
 
 
-    response.delete_cookie("refresh_token")
-    return {"message": "Logged out"}
