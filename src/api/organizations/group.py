@@ -5,7 +5,9 @@ from src.CRUD.CRUDBase import CRUDBaseAsync
 from src.model import Group
 from src.schemas import GroupUpdate , GroupCreate
 
-group_router = APIRouter()
+group_router = APIRouter(
+    tags=["Group"]
+)
 
 main_crud = CRUDBaseAsync(Group)
 

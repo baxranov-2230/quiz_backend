@@ -6,7 +6,9 @@ from src.model import Department , Faculty
 from src.schemas import DepartmentUpdate, DepartmentCreate
 from sqlalchemy import select
 
-department_router = APIRouter()
+department_router = APIRouter(
+    tags=["Department"]
+)
 
 main_crud = CRUDBaseAsync(Department)
 

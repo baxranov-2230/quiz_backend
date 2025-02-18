@@ -7,7 +7,9 @@ from sqlalchemy import select
 from src.auth.utils import get_current_user
 from src.schemas import StudentUpdate
 
-student_router = APIRouter()
+student_router = APIRouter(
+    tags=['Student']
+)
 
 main_crud = CRUDBaseAsync(Student)
 

@@ -6,7 +6,9 @@ from src.model import Faculty , Department, Group
 from src.schemas import FacultyCreate , FacultyUpdate
 
 
-faculty_router = APIRouter()
+faculty_router = APIRouter(
+    tags=["Faculty"]
+)
 
 main_crud = CRUDBaseAsync(Faculty)
 
