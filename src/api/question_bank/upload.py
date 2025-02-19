@@ -29,10 +29,10 @@ async def upload_excel(file: UploadFile, db: AsyncSession = Depends(get_db)):
         for _, row in df.iterrows():
             db_question = Question(
                 text=row["Question"],
-                A=row["A"],
-                B=row["B"],
-                C=row["C"],
-                D=row["D"],
+                option_a=row["A"],
+                option_b=row["B"],
+                option_c=row["C"],
+                option_d=row["D"],
             )
             db.add(db_question)
             uploaded_questions.append({
