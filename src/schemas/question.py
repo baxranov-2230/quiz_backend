@@ -14,7 +14,18 @@ class QuestionBase(BaseModel):
     option_d: Optional[str] = None
     option_d_image: Optional[HttpUrl] = None 
     
+class QuestionText(BaseModel):
+    text: Optional[str] = None
+    option_a: Optional[str] = None
+    option_b: Optional[str] = None
+    option_c: Optional[str] = None
+    option_d: Optional[str] = None
 
+class QuestionImage(BaseModel):
+    option_a_image: Optional[HttpUrl] = None 
+    option_b_image: Optional[HttpUrl] = None
+    option_c_image: Optional[HttpUrl] = None
+    option_d_image: Optional[HttpUrl] = None 
 
 
 class QuestionUpdate(BaseModel):
