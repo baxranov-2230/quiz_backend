@@ -4,6 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from src.settings.base import get_db
 from src.model.question import Question
+from src.schemas.question import QuestionImage
 import os
 import shutil
 from uuid import uuid4
@@ -38,7 +39,6 @@ async def create(
 ):
 
 
-    # Only process files if they exist
     image_urls = {
         "option_a_image": save_file(option_a_image) if option_a_image and option_a_image.filename else None,
         "option_b_image": save_file(option_b_image) if option_b_image and option_b_image.filename else None,
