@@ -14,7 +14,7 @@ teacher_router = APIRouter(
 main_crud = CRUDBaseAsync(Teacher)
 
 
-@teacher_router.get("/teacher-get/{id}")
+@teacher_router.get("/teacher-get/{teacher_id}")
 async def teacher_get_id(teacher_id: int , db: AsyncSession = Depends(get_db)):
     return main_crud.get(db , id = teacher_id)
 
@@ -22,20 +22,20 @@ async def teacher_get_id(teacher_id: int , db: AsyncSession = Depends(get_db)):
 async def teacher_get_all(db : AsyncSession = Depends(get_db)):
     return main_crud.get_all(db)
 
-@teacher_router.put("/teacher-update/{id}")
-async def teacher_update(id: int , teacher_in: TeacherUpdate, db : AsyncSession = Depends(get_db)):
-    return await main_crud.update(db , id , obj_in=teacher_in)
+@teacher_router.put("/teacher-update/{teacher_id}")
+async def teacher_update(teacher_id: int , teacher_in: TeacherUpdate, db : AsyncSession = Depends(get_db)):
+    return await main_crud.update(db , id = teacher_id , obj_in=teacher_in)
 
-@teacher_router.delete("/teacher-delete/{id}")
+@teacher_router.delete("/teacher-delete/{teacher_id}")
 async def teacher_delete(
-    id: int , 
+    teacher_id : int , 
     user_info: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db)):
     current_user = await db.execute(select(Teacher).where(Teacher.user_id == user_info.id))
     user = current_user.scalars.first()
     
     await db.delete(user)
-    await main_crud.delete(db, id)
+    await main_crud.delete(db, id = teacher_id)
     await db.commit()
     
     return {"message": "Teacher deleted successfully"}

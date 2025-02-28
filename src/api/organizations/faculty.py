@@ -18,7 +18,7 @@ async def faculty(faculty: FacultyCreate, db : AsyncSession = Depends(get_db)):
 
 
 
-@faculty_router.get("/faculty-get/{id}")
+@faculty_router.get("/faculty-get/{faculty_id}")
 async def faculty_get_id(faculty_id: int, db: AsyncSession = Depends(get_db)):
     return await main_crud.get(db , id = faculty_id)
 
@@ -26,7 +26,7 @@ async def faculty_get_id(faculty_id: int, db: AsyncSession = Depends(get_db)):
 async def faculty_get_all(db : AsyncSession = Depends(get_db)):
     return await main_crud.get_all(db)
 
-@faculty_router.put("/faculty-update/{id}")
+@faculty_router.put("/faculty-update/{faculty_id}")
 async def faculty_update(
     faculty_id: int, 
     faculty_in : FacultyUpdate , 

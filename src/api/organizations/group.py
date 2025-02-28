@@ -21,19 +21,20 @@ async def add_group(
 async def get_group(db: AsyncSession = Depends(get_db)):
     return await main_crud.get_all(db)
 
-@group_router.get("/group-get/{id}")
-async def get_group_by_id(id: int, db: AsyncSession = Depends(get_db)):
-    return await main_crud.get(db, id)
+@group_router.get("/group-get/{group_id}")
+async def get_group_by_id(group_id: int, db: AsyncSession = Depends(get_db)):
+    return await main_crud.get(db, id = group_id)
 
-@group_router.put("/group-update/{id}")
+@group_router.put("/group-update/{group_id}")
 async def update_group(
-    id: int, 
+    group_id: int, 
     group_in : GroupUpdate,
     db: AsyncSession = Depends(get_db)):
-    await main_crud.update(db , id , obj_in=group_in)
-    return await main_crud.update(db, id)
+    return await main_crud.update(db , id = group_id , obj_in=group_in)
 
-@group_router.delete("/group-delete/{id}")
-async def delete_group(db : AsyncSession = Depends(get_db)):
-    await main_crud.delete(db, id)
+@group_router.delete("/group-delete/{group_id}")
+async def delete_group(
+    group_id: int,
+    db : AsyncSession = Depends(get_db)):
+    await main_crud.delete(db, id = group_id)
     return {"message": "Group deleted successfully"}
