@@ -25,7 +25,7 @@ async def department(department: DepartmentCreate, db : AsyncSession = Depends(g
     return await main_crud.create(db, obj_in=department)
 
 
-@department_router.get("/department-get/{id}")
+@department_router.get("/department-get/{department_id}")
 async def department_get_id(department_id: int, db: AsyncSession = Depends(get_db)):
     return await main_crud.get(db , id = department_id)
 
@@ -33,14 +33,14 @@ async def department_get_id(department_id: int, db: AsyncSession = Depends(get_d
 async def department_get_all(db : AsyncSession = Depends(get_db)):
     return await main_crud.get_all(db)
 
-@department_router.put("/department-update/{id}")
+@department_router.put("/department-update/{department_id}")
 async def department_update(
     department_id: int, 
     department_in : DepartmentUpdate , 
     db : AsyncSession = Depends(get_db)):
     return await main_crud.update(db, id = department_id, obj_in=department_in)
 
-@department_router.delete("/department-delete/{id}")
+@department_router.delete("/department-delete/{department_id}")
 async def department_delete(
     department_id: int,
     db: AsyncSession = Depends(get_db)):
