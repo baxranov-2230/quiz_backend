@@ -16,11 +16,11 @@ main_crud = CRUDBaseAsync(Teacher)
 
 @teacher_router.get("/teacher-get/{teacher_id}")
 async def teacher_get_id(teacher_id: int , db: AsyncSession = Depends(get_db)):
-    return main_crud.get(db , id = teacher_id)
+    return await main_crud.get(db , id = teacher_id)
 
 @teacher_router.get("/teacher-get-all")
 async def teacher_get_all(db : AsyncSession = Depends(get_db)):
-    return main_crud.get_all(db)
+    return await main_crud.get_all(db)
 
 @teacher_router.put("/teacher-update/{teacher_id}")
 async def teacher_update(teacher_id: int , teacher_in: TeacherUpdate, db : AsyncSession = Depends(get_db)):

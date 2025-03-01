@@ -1,14 +1,14 @@
 from fastapi import APIRouter, Depends, UploadFile, File, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
-from src.model import Student, User, UserRole, Group
 from sqlalchemy.future import select
 import pandas as pd
+from src.model import Student, User, UserRole, Group, Teacher, Department
 from src.settings.base import get_db
 from src.auth.utils import generate_password
 
 router = APIRouter()
 
-@router.post("/upload_exel_student")
+@router.post("/upload_excel_student")
 async def upload_excel(
     file: UploadFile = File(...),
     db: AsyncSession = Depends(get_db),
@@ -18,45 +18,41 @@ async def upload_excel(
     
     df = pd.read_excel(file.file)
     
-    expected_columns = {"first_name", "last_name", "patronymic", "group", "jshir", "passport", "role"}
-    if not expected_columns.issubset(set(df.columns)):
+    required_columns = {"first_name", "last_name", "patronymic", "jshir", "passport", "role"}
+    if not required_columns.issubset(set(df.columns)):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Invalid column names in Excel file"
-        )    
-    
-    
+            detail="Missing required columns in Excel file"
+        )
+
     users = []
     students = []
+    teachers = []
     
     for _, row in df.iterrows():
+        # Check for duplicate JSHIR
         result = await db.execute(select(Student).where(Student.jshir == str(row["jshir"])))
-        existing_student = result.scalars().first()
-        if existing_student:
+        if result.scalars().first():
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail=f"JSHIR {row['jshir']} already exists"
             )
-        
-        group_result = await db.execute(select(Group).where(Group.name == row["group"]))
-        group = group_result.scalars().first()
-        if not group:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail=f"Group {row['group']} does not exist"
-            )
-        
-        existing_passport = await db.execute(select(Student).where(Student.passport == row["passport"]))
+
+        # Check for duplicate passport
+        existing_passport = await db.execute(select(User).where(User.username == row["passport"]))
         if existing_passport.scalars().first():
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail=f"Student with passport {row['passport']} already exists"
+                detail=f"User with passport {row['passport']} already exists"
             )
+
+        # Validate role
         try:
             user_role = UserRole(row["role"])
         except ValueError:
             raise HTTPException(status_code=400, detail=f"Invalid role: {row['role']}")
-        
+
+        # Create user
         user = User(
             username=row["passport"],
             hashed_password=await generate_password(),
@@ -64,9 +60,23 @@ async def upload_excel(
             disabled=False
         )
         db.add(user)
-        await db.flush()  
-        
+        await db.flush()  # Ensure user.id is generated
+
         if user_role == UserRole.student:
+            if "group" not in df.columns:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="Missing 'group' column for students"
+                )
+
+            group_result = await db.execute(select(Group).where(Group.name == row["group"]))
+            group = group_result.scalars().first()
+            if not group:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail=f"Group {row['group']} does not exist"
+                )
+
             student = Student(
                 first_name=row["first_name"],
                 last_name=row["last_name"],
@@ -77,7 +87,36 @@ async def upload_excel(
                 user_id=user.id
             )
             students.append(student)
-    
-    db.add_all(users + students)
+
+        elif user_role == UserRole.teacher:
+            if "department" not in df.columns:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="Missing 'department' column for teachers"
+                )
+
+            department_result = await db.execute(select(Department).where(Department.name == row["department"]))
+            department = department_result.scalars().first()
+            if not department:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail=f"Department {row['department']} does not exist"
+                )
+
+            teacher = Teacher(
+                first_name=row["first_name"],
+                last_name=row["last_name"],
+                patronymic=row["patronymic"],
+                jshir=str(row["jshir"]),
+                user_id=user.id,
+                department_id=department.id,
+                passport = row["passport"]
+            )
+            teachers.append(teacher)
+
+        users.append(user)
+
+    db.add_all(users + students + teachers)
     await db.commit()
+    
     return {"message": "Data successfully uploaded"}
