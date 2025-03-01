@@ -10,6 +10,8 @@ from functools import wraps
 from src.settings.config import settings
 from src.model.user import User, UserRole
 from src.settings.base import get_db  
+import secrets
+import asyncio
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -107,3 +109,5 @@ def role_required(required_role: UserRole):
 
 
         
+async def generate_password():
+    return secrets.token_hex(4)

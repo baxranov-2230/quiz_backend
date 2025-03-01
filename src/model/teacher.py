@@ -13,6 +13,7 @@ class Teacher(Base):
     patronymic = Column(String(50), nullable=True)
     department_id = Column(Integer, ForeignKey("departments.id"), nullable=True)
     jshir = Column(String(14), unique=True, nullable=True)
+    passport = Column(String(20), unique=True, nullable=True)
     
     department = relationship("Department", back_populates="teachers")
     user = relationship("User", back_populates="teacher", uselist=False)
