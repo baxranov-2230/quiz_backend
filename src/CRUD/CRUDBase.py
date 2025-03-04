@@ -1,9 +1,13 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
+from sqlalchemy import insert 
 from typing import Type, TypeVar, Generic, List , Optional
-from src.model.faculty import Faculty
+from src.model import Faculty 
 from fastapi import HTTPException
 from src.settings.base import Base
+from src.model.teacher_subject_association import teacher_subject_association
+from src.model.group_subject_association import group_subject_association
+from collections import defaultdict
 
 ModelType = TypeVar("ModelType", bound=Base)
 SchemaType = TypeVar("SchemaType")
@@ -58,3 +62,9 @@ class CRUDBaseAsync(Generic[ModelType, SchemaType]):
         db_obj = await self.get(db, id)
         await db.delete(db_obj)
         await db.commit()
+        
+    async def insert_many_to_many(self, db: AsyncSession, obj_in: SchemaType):
+        stmt = insert(self.model).values(**obj_in.model_dump())  
+        await db.execute(stmt)
+        await db.commit()
+        
