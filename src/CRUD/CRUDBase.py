@@ -1,6 +1,7 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from typing import Type, TypeVar, Generic, List , Optional
+from src.model.faculty import Faculty
 from fastapi import HTTPException
 from src.settings.base import Base
 
@@ -21,6 +22,17 @@ class CRUDBaseAsync(Generic[ModelType, SchemaType]):
     async def get_all(self, db: AsyncSession, limit: Optional[int] = 100) -> List[ModelType]:
         result = await db.execute(select(self.model).limit(limit))
         return result.scalars().all()
+
+    async def get_all_name(self , db : AsyncSession, limit: Optional[int] = 100):
+        stmt = (
+            select(self.model.name, Faculty.name.label("faculty"))
+            .join(Faculty, self.model.faculty_id == Faculty.id)
+            .limit(limit)
+        )
+        result = await db.execute(stmt)
+        rows = result.mappings().all()
+        return rows
+
 
     async def create(self, db: AsyncSession, obj_in: SchemaType) -> ModelType:
         db_obj = self.model(**obj_in.dict())

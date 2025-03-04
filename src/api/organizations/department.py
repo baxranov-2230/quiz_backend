@@ -31,7 +31,7 @@ async def department_get_id(department_id: int, db: AsyncSession = Depends(get_d
 
 @department_router.get("/department-get-all")
 async def department_get_all(db : AsyncSession = Depends(get_db)):
-    return await main_crud.get_all(db)
+    return await main_crud.get_all_name(db)
 
 @department_router.put("/department-update/{department_id}")
 async def department_update(
