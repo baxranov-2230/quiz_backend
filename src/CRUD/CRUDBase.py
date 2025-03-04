@@ -25,7 +25,11 @@ class CRUDBaseAsync(Generic[ModelType, SchemaType]):
 
     async def get_all_name(self , db : AsyncSession, limit: Optional[int] = 100):
         stmt = (
-            select(self.model.name, Faculty.name.label("faculty"))
+            select(
+                self.model.name, 
+                self.model.id,
+                Faculty.name.label("faculty")
+                )
             .join(Faculty, self.model.faculty_id == Faculty.id)
             .limit(limit)
         )
