@@ -11,7 +11,9 @@ from src.settings.config import settings
 from src.model.user import User, UserRole
 from src.settings.base import get_db  
 import secrets
-import asyncio
+from typing import Callable, List
+from .exceptions import InvalidRoleException
+
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -83,31 +85,6 @@ async def get_current_user(
     return user
 
 
-def get_user_role(required_role: UserRole):
-    async def role_dependency(current_user: User = Depends(get_current_user)):
-        if current_user.role != required_role:
-            raise HTTPException(
-                status_code=status.HTTP_403_FORBIDDEN,
-                detail="Insufficient permissions"
-            )
-        return current_user
-    return role_dependency
 
-def role_required(required_role: UserRole):
-    def decorator(func):
-        @wraps(func)
-        async def wrapper(*args, current_user: User = Depends(get_current_user), **kwargs):
-            if current_user.role != required_role:
-                raise HTTPException(
-                    status_code=status.HTTP_403_FORBIDDEN,
-                    detail="Insufficient permissions"
-                )
-            return await func(*args, current_user=current_user, **kwargs)
-        return wrapper
-    return decorator
-
-
-
-        
 async def generate_password():
     return secrets.token_hex(4)

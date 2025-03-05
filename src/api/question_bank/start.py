@@ -1,22 +1,24 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from src.settings.base import get_db
-from src.model import UserTest, User, Teacher, Subject, Group , UserRole
-from src.auth.utils import get_current_user, role_required
+from src.model import UserTest, User, Teacher, Subject, Group
+from src.auth.utils import get_current_user
 
 router = APIRouter()
 
 @router.post("/start")
-@role_required(UserRole.teacher)
 async def start(
     group: str,
     subject: str,
     user_info: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ):
-    if user_info.role.value != "teacher":
-        raise HTTPException()
+    if user_info.role.value != "teacher" or user_info.role.value != "admin":
+        raise HTTPException(
+            status_code=status.HTTP_405_METHOD_NOT_ALLOWED,
+            detail="You not teacher"
+        )
 
     results = await db.execute(
         select(Teacher, Subject, Group)

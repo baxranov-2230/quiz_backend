@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
-from src.model.question import Question
+from src.model import Question, UserRole
 from src.settings.base import get_db
 from src.schemas.question import QuestionResponse
 from typing import List

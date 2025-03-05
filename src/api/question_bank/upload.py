@@ -25,6 +25,7 @@ async def save_file_from_excel(image, row_idx, col_name) -> str:
 @router.post("/upload")
 async def upload_excel(
     file: UploadFile,
+    
     db: AsyncSession = Depends(get_db),
 ):
     try:
