@@ -1,18 +1,17 @@
 import asyncio
 from datetime import datetime, timedelta
 from jose import JWTError, jwt, ExpiredSignatureError
-from fastapi import Depends, HTTPException, status
+from fastapi import Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer
 from passlib.context import CryptContext
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
-from functools import wraps
 from src.settings.config import settings
-from src.model.user import User, UserRole
+from src.model.user import User
 from src.settings.base import get_db  
 import secrets
-from typing import Callable, List
-from .exceptions import InvalidRoleException
+
+
 
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
