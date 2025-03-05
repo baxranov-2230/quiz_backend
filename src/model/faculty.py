@@ -9,3 +9,4 @@ class Faculty(Base):
     name = Column(String(100), nullable=False)
     
     departments = relationship("Department", back_populates="faculty", cascade="all, delete")
+    groups = relationship("Group", back_populates="faculties", cascade="all, delete")
