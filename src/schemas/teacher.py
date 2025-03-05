@@ -1,6 +1,11 @@
 from typing import List, Optional
 from pydantic import BaseModel, ConfigDict
 
+# Placeholder schemas for related models.
+# Replace the example fields with the actual fields of your models.
+
+
+# Base schema for Teacher (shared fields for create/update)
 class TeacherBase(BaseModel):
     user_id: Optional[int] = None
     last_name: Optional[str] = None
