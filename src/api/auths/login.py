@@ -49,47 +49,58 @@ async def login(
         {"sub": user.username},
         timedelta(days=settings.REFRESH_TOKEN_EXPIRE_DAYS)
     )
-
-
-    user_info = await get_current_user(access_token, db)
-    if not user_info:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="User info not found"
-        )
-
-    if user_info.role.value == "student":
-        result = await db.execute(
-            select(Student).filter(Student.user_id == user_info.id)
-        )
-        student_info = result.scalar_one_or_none()
-        if not student_info:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="Student not found"
-            )
-        return {
+    return {
             "access_token": access_token,
-            "token_type": "bearer",
-            "user_info": student_info
+            "token_type": "bearer"
         }
-    elif user_info.role.value == "teacher":
-        result = await db.execute(
-            select(Teacher).filter(Teacher.user_id == user_info.id)
-        )
-        teacher_info = result.scalar_one_or_none()
-        if not teacher_info:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="Teacher not found"
-            )
-        return {
-            "access_token": access_token,
-            "token_type": "bearer",
-            "user_info": teacher_info
-        }
-    else:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Invalid role"
-        )
+
+
+    # user_info = await get_current_user(access_token, db)
+    # if not user_info:
+    #     raise HTTPException(
+    #         status_code=status.HTTP_404_NOT_FOUND,
+    #         detail="User info not found"
+    #     )
+
+    # if user_info.role.value == "student":
+    #     result = await db.execute(
+    #         select(Student).filter(Student.user_id == user_info.id)
+    #     )
+    #     student_info = result.scalar_one_or_none()
+    #     if not student_info:
+    #         raise HTTPException(
+    #             status_code=status.HTTP_404_NOT_FOUND,
+    #             detail="Student not found"
+    #         )
+    #     return {
+    #         "access_token": access_token,
+    #         "token_type": "bearer",
+    #         "user_info": student_info
+    #     }
+    # elif user_info.role.value == "teacher":
+    #     result = await db.execute(
+    #         select(Teacher).filter(Teacher.user_id == user_info.id)
+    #     )
+    #     teacher_info = result.scalar_one_or_none()
+    #     if not teacher_info:
+    #         raise HTTPException(
+    #             status_code=status.HTTP_404_NOT_FOUND,
+    #             detail="Teacher not found"
+    #         )
+    #     return {
+    #         "access_token": access_token,
+    #         "token_type": "bearer",
+    #         "user_info": teacher_info
+    #     }
+        
+    # elif user_info.role.value == "admin":
+    #     return {
+    #         "access_token": access_token,
+    #         "token_type": "bearer",
+    #         "user_info": teacher_info
+    #     }
+    # else:
+    #     raise HTTPException(
+    #         status_code=status.HTTP_400_BAD_REQUEST,
+    #         detail="Invalid role"
+    #     )

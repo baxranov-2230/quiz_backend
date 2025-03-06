@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 from src.settings.base import get_db
 from src.CRUD.CRUDBase import CRUDBaseAsync
-from src.model import Faculty , Department, Group
+from src.model import Faculty 
 from src.schemas import FacultyCreate , FacultyUpdate
 
 

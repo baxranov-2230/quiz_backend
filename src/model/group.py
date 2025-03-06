@@ -9,11 +9,11 @@ class Group(Base):
     
     id = Column(Integer, primary_key=True, nullable=False)
     name = Column(String(25), nullable=False)
-    department_id = Column(Integer, ForeignKey("departments.id"), nullable=False)
+    faculty_id = Column(Integer, ForeignKey("faculties.id"), nullable=False)
     
 
     subjects = relationship("Subject", back_populates="group", cascade="all, delete")
     students = relationship("Student", back_populates="group", cascade="all, delete")
-    department = relationship("Department", back_populates="groups")
+    faculties = relationship("Faculty", back_populates="groups")
     user_tests = relationship("UserTest", back_populates="group")
     teachers = relationship("Teacher", secondary=teacher_group_association, back_populates="groups")

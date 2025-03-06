@@ -7,7 +7,7 @@ from src.model import User
 
 router = APIRouter()
 
-@router.post("/logout")
+@router.put("/logout")
 async def logout(
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db)

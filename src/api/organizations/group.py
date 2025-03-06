@@ -3,7 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src.settings.base import get_db
 from src.CRUD.CRUDBase import CRUDBaseAsync
 from src.model import Group
-from src.schemas import GroupUpdate , GroupCreate
+from src.schemas import GroupUpdate , GroupCreateRequest
 
 group_router = APIRouter(
     tags=["Group"]
@@ -13,7 +13,7 @@ main_crud = CRUDBaseAsync(Group)
 
 @group_router.post("/group-create")
 async def add_group(
-    group: GroupCreate,
+    group: GroupCreateRequest,
     db: AsyncSession = Depends(get_db)):
     return await main_crud.create(db, obj_in=group)
 

@@ -11,4 +11,3 @@ class Department(Base):
     
     faculty = relationship("Faculty", back_populates="departments")
     teachers = relationship("Teacher", back_populates="department", cascade="all, delete")
-    groups = relationship("Group", back_populates="department", cascade="all, delete")

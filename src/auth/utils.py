@@ -6,12 +6,14 @@ from fastapi.security import OAuth2PasswordBearer
 from passlib.context import CryptContext
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
-from functools import wraps
 from src.settings.config import settings
-from src.model.user import User, UserRole
+from src.model.user import User
 from src.settings.base import get_db  
+from typing import List , Callable
 import secrets
-import asyncio
+
+
+
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -82,32 +84,16 @@ async def get_current_user(
     
     return user
 
-
-def get_user_role(required_role: UserRole):
-    async def role_dependency(current_user: User = Depends(get_current_user)):
-        if current_user.role != required_role:
+def check_user_role(allowed_roles: List[str]) -> Callable:
+    async def role_checker(user_info: User = Depends(get_current_user)) -> User:
+        if user_info.role.value not in allowed_roles:
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
-                detail="Insufficient permissions"
+                detail=f"You do not have permission. Allowed roles: {allowed_roles}",
             )
-        return current_user
-    return role_dependency
-
-def role_required(required_role: UserRole):
-    def decorator(func):
-        @wraps(func)
-        async def wrapper(*args, current_user: User = Depends(get_current_user), **kwargs):
-            if current_user.role != required_role:
-                raise HTTPException(
-                    status_code=status.HTTP_403_FORBIDDEN,
-                    detail="Insufficient permissions"
-                )
-            return await func(*args, current_user=current_user, **kwargs)
-        return wrapper
-    return decorator
-
-
-
-        
+        return user_info  
+    return role_checker 
+    
+    
 async def generate_password():
     return secrets.token_hex(4)

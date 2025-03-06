@@ -9,6 +9,7 @@ from src.auth.utils import hash_password
 
 router = APIRouter()
 
+
 @router.post("/signup")
 async def register(user_data: RegisterRequest, db: AsyncSession = Depends(get_db)):
 
