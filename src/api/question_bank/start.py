@@ -3,7 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from src.settings.base import get_db
 from src.model import UserTest, User, Teacher, Subject, Group
-from src.auth.utils import get_current_user
+from src.auth.utils import check_user_role
 
 router = APIRouter()
 
@@ -11,14 +11,10 @@ router = APIRouter()
 async def start(
     group: str,
     subject: str,
-    user_info: User = Depends(get_current_user),
+    user_info: User = Depends(check_user_role(["teacher", "admin"])),
     db: AsyncSession = Depends(get_db),
 ):
-    if user_info.role.value != "teacher" or user_info.role.value != "admin":
-        raise HTTPException(
-            status_code=status.HTTP_405_METHOD_NOT_ALLOWED,
-            detail="You not teacher"
-        )
+
 
     results = await db.execute(
         select(Teacher, Subject, Group)

@@ -1,7 +1,7 @@
 import asyncio
 from datetime import datetime, timedelta
 from jose import JWTError, jwt, ExpiredSignatureError
-from fastapi import Depends, HTTPException
+from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from passlib.context import CryptContext
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -9,6 +9,7 @@ from sqlalchemy.future import select
 from src.settings.config import settings
 from src.model.user import User
 from src.settings.base import get_db  
+from typing import List , Callable
 import secrets
 
 
@@ -83,7 +84,16 @@ async def get_current_user(
     
     return user
 
-
-
+def check_user_role(allowed_roles: List[str]) -> Callable:
+    async def role_checker(user_info: User = Depends(get_current_user)) -> User:
+        if user_info.role.value not in allowed_roles:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail=f"You do not have permission. Allowed roles: {allowed_roles}",
+            )
+        return user_info  
+    return role_checker 
+    
+    
 async def generate_password():
     return secrets.token_hex(4)

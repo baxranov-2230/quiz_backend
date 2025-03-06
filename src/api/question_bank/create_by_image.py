@@ -4,7 +4,6 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from src.settings.base import get_db
 from src.model.question import Question
-from src.schemas.question import QuestionImage
 import os
 import shutil
 from uuid import uuid4
