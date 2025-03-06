@@ -28,7 +28,7 @@ async def teacher_update(teacher_id: int , teacher_in: TeacherUpdate, db : Async
 
 @teacher_router.delete("/teacher-delete/{teacher_id}")
 async def teacher_delete(
-    teacher_id : int , 
+ 
     user_info: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db)):
     current_user = await db.execute(select(Teacher).where(Teacher.user_id == user_info.id))

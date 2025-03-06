@@ -28,12 +28,11 @@ async def student_update(student_id: int , student_in: StudentUpdate, db : Async
 
 @student_router.delete("/student-delete/{id}")
 async def student_delete(
-    student_id : int , 
+   
     user_info: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db)):
     current_user = await db.execute(select(Student).where(Student.user_id == user_info.id))
     user = current_user.scalars.first()
-    
     await db.delete(user)
     await main_crud.delete(db, id = student_id)
     await db.commit()

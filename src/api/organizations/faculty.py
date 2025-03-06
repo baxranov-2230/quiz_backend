@@ -33,7 +33,7 @@ async def faculty_update(
     db : AsyncSession = Depends(get_db)):
     return await main_crud.update(db, id = faculty_id, obj_in=faculty_in)
 
-@faculty_router.delete("/faculty-delete/{id}")
+@faculty_router.delete("/faculty-delete/{faculty_id}")
 async def faculty_delete(
     faculty_id: int, 
     db: AsyncSession = Depends(get_db)):
