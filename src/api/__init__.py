@@ -9,4 +9,4 @@ main_router = APIRouter()
 
 main_router.include_router(auth)
 main_router.include_router(question , dependencies=[Depends(check_user_role(["admin", "teacher"]))])
-main_router.include_router(orgnazition, dependencies=[Depends(check_user_role(["admin"]))])
+main_router.include_router(orgnazition, ) #dependencies=[Depends(check_user_role(["admin"]))]

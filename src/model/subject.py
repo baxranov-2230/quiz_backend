@@ -1,5 +1,8 @@
-from sqlalchemy import Column , Integer , String , ForeignKey
+from sqlalchemy import Column , Integer , String 
 from sqlalchemy.orm import relationship
+from src.model.teacher_subject_association import teacher_subject_association
+from src.model.group_subject_association import group_subject_association
+
 from src.settings.base import Base
 
 class Subject(Base):
@@ -7,12 +10,13 @@ class Subject(Base):
     
     id = Column(Integer, primary_key=True, nullable=False)
     name = Column(String(100), nullable=False)
-    teacher_id = Column(Integer, ForeignKey("teachers.id"), nullable=False)
-    group_id = Column(Integer, ForeignKey("groups.id"), nullable=False)
-    
-    teacher = relationship("Teacher", back_populates="subjects")
-    group = relationship("Group", back_populates="subjects")
+
+    groups = relationship("Group", back_populates="subjects") 
+    user_tests = relationship("UserTest", back_populates="subject")
     results = relationship("ResultStudent", back_populates="subject", cascade="all, delete")
     questions = relationship("Question", back_populates="subject", cascade="all, delete-orphan")
     
-    user_tests = relationship("UserTest", back_populates="subject")
+
+
+    teachers = relationship("Teacher", secondary=teacher_subject_association, back_populates="subjects")
+    groups = relationship("Group", secondary=group_subject_association, back_populates="subjects")

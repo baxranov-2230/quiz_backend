@@ -2,6 +2,7 @@ from sqlalchemy import Column , Integer , String , ForeignKey
 from sqlalchemy.orm import relationship
 from src.settings.base import Base
 from src.model.teacher_group_association import teacher_group_association
+from src.model.teacher_subject_association import teacher_subject_association
 
 class Teacher(Base):
     __tablename__ = "teachers"
@@ -19,6 +20,7 @@ class Teacher(Base):
     user = relationship("User", back_populates="teacher", uselist=False)
     subjects = relationship("Subject", back_populates="teacher", cascade="all, delete")
     questions = relationship("Question", back_populates="teacher", cascade="all, delete-orphan")
-    
+    subjects = relationship("Subject", secondary=teacher_subject_association, back_populates="teachers")
     groups = relationship("Group", secondary=teacher_group_association, back_populates="teachers")
+    
     user_tests = relationship("UserTest", back_populates="teacher")
