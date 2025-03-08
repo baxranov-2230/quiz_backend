@@ -20,7 +20,8 @@ class Teacher(Base):
     user = relationship("User", back_populates="teacher", uselist=False)
     subjects = relationship("Subject", back_populates="teacher", cascade="all, delete")
     questions = relationship("Question", back_populates="teacher", cascade="all, delete-orphan")
+    
     subjects = relationship("Subject", secondary=teacher_subject_association, back_populates="teachers")
     groups = relationship("Group", secondary=teacher_group_association, back_populates="teachers")
-    
+
     user_tests = relationship("UserTest", back_populates="teacher")

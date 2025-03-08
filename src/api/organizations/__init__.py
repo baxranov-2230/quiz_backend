@@ -7,6 +7,7 @@ from .teacher import teacher_router as teacher
 from .subject import subject_router as subject
 from .teacher_group import teacher_group_router as teacher_group
 from .teacher_subject import teacher_subject_router as teacher_subject
+from .group_subject import group_subject_router as group_subject
 
 
 organization_router = APIRouter()
@@ -20,4 +21,5 @@ organization_router.include_router(teacher)
 organization_router.include_router(subject)
 organization_router.include_router(teacher_group)
 organization_router.include_router(teacher_subject)
+organization_router.include_router(group_subject)
 

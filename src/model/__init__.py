@@ -9,3 +9,5 @@ from .user import User, UserRole
 from .question import Question
 from .user_test import UserTest
 from .teacher_group_association import teacher_group_association
+from .group_subject_association import group_subject_association
+from .teacher_subject_association import teacher_subject_association
