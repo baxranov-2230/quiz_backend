@@ -11,3 +11,4 @@ class Department(Base):
     
     faculty = relationship("Faculty", back_populates="departments")
     teachers = relationship("Teacher", back_populates="department", cascade="all, delete")
+    subjects = relationship("Subject", back_populates="department", cascade="all, delete")

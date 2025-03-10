@@ -1,9 +1,10 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends , HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from src.settings.base import get_db
 from src.CRUD.CRUDBase import CRUDBaseAsync
-from src.model import Group
+from src.model import Group, Faculty
 from src.schemas import GroupUpdate , GroupCreateRequest
+from sqlalchemy.future import select
 
 group_router = APIRouter(
     tags=["Group"]
@@ -15,7 +16,22 @@ main_crud = CRUDBaseAsync(Group)
 async def add_group(
     group: GroupCreateRequest,
     db: AsyncSession = Depends(get_db)):
-    return await main_crud.create(db, obj_in=group)
+    
+    new_group = await main_crud.create(db, obj_in=group)
+    
+    stmt = select(Faculty).where(Faculty.id == new_group.faculty_id)
+    result = await db.execute(stmt)
+    faculty = result.scalars().first()  # Extract the actual faculty object
+
+    if not faculty:
+        raise HTTPException(status_code=404, detail="Faculty not found")
+
+    return {
+        "id": new_group.id,
+        "name": new_group.name,
+        "faculty": faculty.name,
+        "faculty_id": faculty.id
+    }
 
 @group_router.get("/group-get-all")
 async def get_group(db: AsyncSession = Depends(get_db)):
