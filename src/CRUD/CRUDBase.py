@@ -5,9 +5,6 @@ from typing import Type, TypeVar, Generic, List , Optional
 from src.model import Faculty 
 from fastapi import HTTPException
 from src.settings.base import Base
-from src.model.teacher_subject_association import teacher_subject_association
-from src.model.group_subject_association import group_subject_association
-from collections import defaultdict
 
 ModelType = TypeVar("ModelType", bound=Base)
 SchemaType = TypeVar("SchemaType")
@@ -67,4 +64,4 @@ class CRUDBaseAsync(Generic[ModelType, SchemaType]):
         stmt = insert(self.model).values(**obj_in.model_dump())  
         await db.execute(stmt)
         await db.commit()
-        
+        return {"message": "Association created successfully"}
