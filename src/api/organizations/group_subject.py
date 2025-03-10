@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends , HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from src.settings.base import get_db
 from sqlalchemy.future import select
@@ -8,9 +8,11 @@ from src.model.group_subject_association import group_subject_association
 from src.schemas.group_subject_association import (
     GroupSubjectAssociationCreate,
 )
+from sqlalchemy import insert  
 from collections import defaultdict
 from sqlalchemy.exc import NoResultFound
 from sqlalchemy.orm import selectinload
+from sqlalchemy.exc import IntegrityError
 
 group_subject_router = APIRouter(
     tags=["Group Subject Association"]
@@ -99,6 +101,46 @@ async def get_subject_groups_by_id(
     }
 
 
+
+@group_subject_router.post("/group_subject_association_create/{subject_id}")
+async def create_group_subject_association(
+    subject_id: int,
+    group_ids: list[int],
+    db: AsyncSession = Depends(get_db),
+):
+    try:
+        subject = await db.get(Subject, subject_id)
+        if not subject:
+            return {"error": "Subject not found"}
+        
+        # Fetch existing associations
+        existing_stmt = select(group_subject_association.c.group_id).where(
+            group_subject_association.c.subject_id == subject_id
+        )
+        existing_result = await db.execute(existing_stmt)
+        existing_group_ids = set(existing_result.scalars().all())
+
+        # Filter out already associated groups
+        new_group_ids = [gid for gid in group_ids if gid not in existing_group_ids]
+        
+        if not new_group_ids:
+            return {"message": "All groups are already associated with this subject"}
+
+        # Insert new associations
+        insert_stmt = insert(group_subject_association).values(
+            [{"group_id": gid, "subject_id": subject_id} for gid in new_group_ids]
+        )
+        await db.execute(insert_stmt)
+        await db.commit()
+
+        return {"message": "Groups successfully associated with the subject"}
+
+    except IntegrityError:
+        await db.rollback()
+        return {"error": "Duplicate entry detected"}
+    
+    except NoResultFound:
+        return {"error": "Invalid data provided"}
 
 
 @group_subject_router.put("/group_subject_association_update/{group_id}")
