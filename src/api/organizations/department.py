@@ -16,7 +16,6 @@ main_crud = CRUDBaseAsync(Department)
 
 
 @department_router.post("/department-create")
-
 async def department(   
     department: DepartmentCreate, 
     db : AsyncSession = Depends(get_db)):
